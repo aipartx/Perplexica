@@ -34,6 +34,8 @@ type Message = {
 type ChatModel = {
   provider: string;
   name: string;
+  customOpenAIKey?: string;
+  customOpenAIBaseURL?: string;
 };
 
 type EmbeddingModel = {
@@ -223,11 +225,11 @@ export const POST = async (req: Request) => {
 
     if (body.chatModel?.provider === 'custom_openai') {
       llm = new ChatOpenAI({
-        openAIApiKey: getCustomOpenaiApiKey(),
-        modelName: getCustomOpenaiModelName(),
+        openAIApiKey: body.chatModel?.customOpenAIKey || getCustomOpenaiApiKey(),
+        modelName: body.chatModel?.name || getCustomOpenaiModelName(),
         temperature: 0.7,
         configuration: {
-          baseURL: getCustomOpenaiApiUrl(),
+          baseURL: body.chatModel?.customOpenAIBaseURL || getCustomOpenaiApiUrl(),
         },
       }) as unknown as BaseChatModel;
     } else if (chatModelProvider && chatModel) {
